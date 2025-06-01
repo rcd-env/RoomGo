@@ -1,0 +1,75 @@
+<% layout('layouts/boilerplate') -%>
+
+<body>
+  <div class="row-1 mt-5 mb-5">
+    <div class="col-6 offset-3">
+      <!-- <h1>Create A New List :</h1> -->
+      <form action="/lists/<%=list._id%>" method="post">
+        <div class="mb-3 mt-2">
+          <label for="title" class="form-label">Title</label>
+          <input
+            class="form-control"
+            type="text"
+            id="title"
+            name="title"
+            value="<%=list.title%>"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea class="form-control" id="description" name="description">
+<%=list.description%></textarea
+          >
+        </div>
+
+        <div class="mb-3">
+          <label for="imageurl" class="form-label">Image URL</label>
+          <input
+            class="form-control"
+            id="imageurl"
+            type="text"
+            name="image"
+            value="<%=list.image.url%>"
+          />
+        </div>
+        <div class="row">
+          <div class="mb-3 col-md-4">
+            <label for="price" class="form-label">Price</label>
+            <input
+              class="form-control"
+              id="price"
+              type="number"
+              name="price"
+              value="<%=list.price%>"
+            />
+          </div>
+          <div class="mb-3 col-md-8">
+            <label for="country" class="form-label">Country</label>
+            <input
+              class="form-control"
+              id="country"
+              type="text"
+              name="country"
+              value="<%=list.country%>"
+            />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="location" class="form-label">Location</label>
+          <input
+            class="form-control"
+            id="location"
+            type="text"
+            name="location"
+            value="<%=list.location%>"
+          />
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <button class="btn btn-dark w-100">Update</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
