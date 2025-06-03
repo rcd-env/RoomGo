@@ -6,7 +6,7 @@ const engine = require("ejs-mate");
 const List = require("./models/list.js");
 require("dotenv").config();
 const ExpressError = require("./utils/ExpressError.js");
-const listSchema = require("./ListSchemaVal.js");
+const listSchema = require("./utils/ListSchemaVal.js");
 
 const PORT = process.env.PORT || 5500;
 const MONGO_URL = "mongodb://127.0.0.1:27017/RoomGo";
