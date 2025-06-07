@@ -3,10 +3,13 @@ const app = express();
 const mongoose = require("mongoose");
 const path = require("path");
 const engine = require("ejs-mate");
-const List = require("./models/list.js");
 require("dotenv").config();
+const List = require("./models/list.model.js");
+const Review = require("./models/review.model.js");
+
 const ExpressError = require("./utils/ExpressError.js");
 const listSchema = require("./utils/ListSchemaVal.js");
+const reviewSchema = require("./utils/reviewSchemaVal.js");
 
 const PORT = process.env.PORT || 5500;
 const MONGO_URL = "mongodb://127.0.0.1:27017/RoomGo";
@@ -20,7 +23,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "/public")));
 
 mongoose
-  .connect(`${process.env.MONGO_URL}`)
+  .connect(MONGO_URL)
   .then(() => {
     console.log("Connection Successful");
   })
@@ -78,7 +81,7 @@ app.post("/lists", async (req, res, next) => {
 app.get("/lists/:id", async (req, res, next) => {
   try {
     let { id } = req.params;
-    let list = await List.findOne({ _id: id });
+    let list = await List.findOne({ _id: id }).populate("reviews");
     res.render("lists/show", { list });
   } catch (error) {
     next(error);
@@ -127,8 +130,47 @@ app.post("/lists/:id", async (req, res, next) => {
 app.get("/lists/:id/delete", async (req, res, next) => {
   try {
     let { id } = req.params;
-    await List.findByIdAndDelete(id);
+    const list = await List.findByIdAndDelete(id);
+    await Review.deleteMany({ _id: { $in: list.reviews } });
     res.redirect("/lists");
+  } catch (error) {
+    next(error);
+  }
+});
+
+// review post route
+
+app.post("/lists/:id/reviews", async (req, res, next) => {
+  try {
+    let result = reviewSchema.validate(req.body);
+    console.log(result);
+
+    if (result.error) next(result.error);
+    else {
+      let { id } = req.params;
+      let { rating, comment } = req.body;
+      const review = await Review.create({
+        rating,
+        comment,
+      });
+      const list = await List.findOne({ _id: id });
+      list.reviews.push(review);
+      await list.save();
+      res.redirect(`/lists/${id}`);
+    }
+  } catch (err) {
+    next(err);
+  }
+});
+
+// review delete route
+
+app.post("/lists/:id/reviews/:reviewId", async (req, res, next) => {
+  try {
+    let { id, reviewId } = req.params;
+    await Review.findByIdAndDelete(reviewId);
+    await List.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    res.redirect(`/lists/${id}`);
   } catch (error) {
     next(error);
   }

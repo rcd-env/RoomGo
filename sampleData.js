@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
-const List = require("./models/list.js");
+const List = require("./models/list.model.js");
 require("dotenv").config();
 
 mongoose
-  .connect(`${process.env.MONGO_URL}`)
+  .connect("mongodb://127.0.0.1:27017/RoomGo")
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log("Error:", err));
 
