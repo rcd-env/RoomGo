@@ -35,7 +35,7 @@ app.get("/", (req, res) => {
   res.render("home");
 });
 // index route
-app.get("/lists", async (req, res) => {
+app.get("/lists", async (req, res, next) => {
   try {
     let lists = await List.find({});
     res.render("lists/index.ejs", { lists });
