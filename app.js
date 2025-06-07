@@ -40,8 +40,7 @@ app.get("/lists", async (req, res) => {
     let lists = await List.find({});
     res.render("lists/index.ejs", { lists });
   } catch (error) {
-    console.log(error);
-    res.send("Internal Server Error.");
+    next(error);
   }
 });
 //create route
