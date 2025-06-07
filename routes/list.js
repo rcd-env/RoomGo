@@ -66,7 +66,6 @@ router.get("/:id/edit", async (req, res, next) => {
   try {
     let { id } = req.params;
     let list = await List.findById(id);
-    console.log(list);
     res.render("lists/edit", { list });
   } catch (error) {
     next(error);

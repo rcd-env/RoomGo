@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 const engine = require("ejs-mate");
 require("dotenv").config();
+const cookieParser = require("cookie-parser");
 
 // routers
 const list = require("./routes/list.js");
@@ -21,6 +22,7 @@ app.set("views", path.join(__dirname, "/views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "/public")));
+app.use(cookieParser());
 
 mongoose
   .connect(MONGO_URL)

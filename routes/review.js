@@ -11,7 +11,6 @@ const reviewSchemaVal = require("../utils/reviewSchemaVal.js");
 router.post("/", async (req, res, next) => {
   try {
     let result = reviewSchemaVal.validate(req.body);
-    console.log(result);
     if (result.error) next(result.error);
     else {
       let { id } = req.params;
