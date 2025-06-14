@@ -22,6 +22,7 @@ router.post("/", async (req, res, next) => {
       const list = await List.findOne({ _id: id });
       list.reviews.push(review);
       await list.save();
+      req.flash("success", "Review Added Successfully.");
       res.redirect(`/lists/${id}`);
     }
   } catch (err) {
@@ -36,6 +37,7 @@ router.post("/:reviewId", async (req, res, next) => {
     let { id, reviewId } = req.params;
     await Review.findByIdAndDelete(reviewId);
     await List.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    req.flash("success", "Review Deleted Successfully.");
     res.redirect(`/lists/${id}`);
   } catch (error) {
     next(error);

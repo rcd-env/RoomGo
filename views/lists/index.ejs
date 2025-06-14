@@ -1,8 +1,5 @@
 <% layout('layouts/boilerplate') -%>
 <body>
-  <!-- <form action="/lists/new"><button>Create New List</button></form> -->
-  <!-- <h1>All Lists :</h1> -->
-
   <main class="cards-main mt-3">
     <% lists.forEach(list => { %>
     <a href="/lists/<%=list._id%>">
@@ -10,19 +7,12 @@
         <img src="<%=list.image.url%>" class="card-img-top" alt="..." />
         <div class="card-body" style="gap: 0">
           <h5 class="card-title"><%=list.title%></h5>
-          <!-- <p class="card-description" style="font-weight: 350; color: #222222">
-            <%=list.description%>
-          </p> -->
           <p class="card-price">
             ₹<%=list.price.toLocaleString("en-IN")%> &bull; night
           </p>
-          <!-- <a href="/lists/<%=list._id%>" class="btn btn-success"
-            >Show Details</a
-          > -->
         </div>
       </div></a
     >
-
     <% });%>
   </main>
 </body>

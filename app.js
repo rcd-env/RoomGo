@@ -5,6 +5,8 @@ const path = require("path");
 const engine = require("ejs-mate");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const flash = require("connect-flash");
 
 // routers
 const list = require("./routes/list.js");
@@ -22,7 +24,21 @@ app.set("views", path.join(__dirname, "/views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "/public")));
+
+const sessionOptions = {
+  secret: "ut&ns7CJe)2P",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+  },
+};
+
 app.use(cookieParser());
+app.use(session(sessionOptions));
+app.use(flash());
 
 mongoose
   .connect(MONGO_URL)
@@ -32,6 +48,12 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
+
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
+});
 
 // root route
 app.get("/", (req, res) => {

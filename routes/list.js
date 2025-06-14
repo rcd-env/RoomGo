@@ -43,6 +43,7 @@ router.post("/", async (req, res, next) => {
         location,
         country,
       });
+      req.flash("success", "New Place Added Successfully.");
       res.redirect("/lists");
     }
   } catch (error) {
@@ -55,7 +56,12 @@ router.get("/:id", async (req, res, next) => {
   try {
     let { id } = req.params;
     let list = await List.findOne({ _id: id }).populate("reviews");
-    res.render("lists/show", { list });
+    if (!list) {
+      req.flash("error", "Place not found.");
+      res.redirect("/lists");
+    } else {
+      res.render("lists/show", { list });
+    }
   } catch (error) {
     next(error);
   }
@@ -66,7 +72,12 @@ router.get("/:id/edit", async (req, res, next) => {
   try {
     let { id } = req.params;
     let list = await List.findById(id);
-    res.render("lists/edit", { list });
+    if (!list) {
+      req.flash("error", "Place not found.");
+      res.redirect("/lists");
+    } else {
+      res.render("lists/edit", { list });
+    }
   } catch (error) {
     next(error);
   }
@@ -90,6 +101,7 @@ router.post("/:id", async (req, res, next) => {
         location,
         country,
       });
+      req.flash("success", "Place Updated Successfully.");
       res.redirect(`/lists/${id}`);
     }
   } catch (error) {
@@ -102,6 +114,7 @@ router.get("/:id/delete", async (req, res, next) => {
   try {
     let { id } = req.params;
     const list = await List.findByIdAndDelete(id);
+    req.flash("success", "Place Deleted Successfully.");
     res.redirect("/lists");
   } catch (error) {
     next(error);
