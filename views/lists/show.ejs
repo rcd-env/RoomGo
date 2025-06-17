@@ -20,13 +20,13 @@
         <div class="row">
           <div class="col-12 col-md-4 mb-2">
             <form action="/lists/<%=list._id%>/edit">
-              <button class="btn btn-dark w-100">Edit</button>
+              <button class="btn btn-outline-info w-100">Edit</button>
             </form>
           </div>
           <div class="col-12 col-md-8">
             <form action="/lists/<%=list._id%>/delete">
               <button
-                class="btn btn-dark w-100"
+                class="btn btn-outline-danger w-100"
                 onclick="return confirm('Are you sure, You want to delete this list?')"
               >
                 Delete
@@ -66,7 +66,7 @@
           required
         ></textarea>
       </div>
-      <button class="btn btn-dark w-100">Add Review</button>
+      <button class="btn btn-outline-secondary w-100">Add Review</button>
     </form>
   </div>
   <hr />

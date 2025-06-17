@@ -7,10 +7,17 @@ require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+
+// models
+
+const User = require("./models/user.model.js");
 
 // routers
-const list = require("./routes/list.js");
-const review = require("./routes/review.js");
+const listRouter = require("./routes/list.js");
+const reviewRouter = require("./routes/review.js");
+const authRouter = require("./routes/auth.js");
 // custom error
 const ExpressError = require("./utils/ExpressError.js");
 // confidentials
@@ -40,6 +47,12 @@ app.use(cookieParser());
 app.use(session(sessionOptions));
 app.use(flash());
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 mongoose
   .connect(MONGO_URL)
   .then(() => {
@@ -61,9 +74,11 @@ app.get("/", (req, res) => {
 });
 
 // list routes
-app.use("/lists", list);
+app.use("/lists", listRouter);
 // review routes
-app.use("/lists/:id/reviews", review);
+app.use("/lists/:id/reviews", reviewRouter);
+// auth routes
+app.use("/auth/", authRouter);
 
 // forbideden routes
 app.all("*", (req, res, next) => {

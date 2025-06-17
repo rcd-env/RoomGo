@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true });
-
+const { isLoggedIn } = require("../utils/isLoggedIn.js");
 //models
 const List = require("../models/list.model.js");
 
@@ -18,15 +18,15 @@ router.get("/", async (req, res, next) => {
 });
 
 //create route
-router.get("/new", (req, res, next) => {
+router.get("/new", isLoggedIn, (req, res, next) => {
   try {
-    res.render("lists/create");
+    return res.render("lists/create");
   } catch (error) {
     next(error);
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", isLoggedIn, async (req, res, next) => {
   try {
     let result = listSchemaVal.validate(req.body);
     if (result.error) next(result.error);
@@ -68,7 +68,7 @@ router.get("/:id", async (req, res, next) => {
 });
 
 //update route
-router.get("/:id/edit", async (req, res, next) => {
+router.get("/:id/edit", isLoggedIn, async (req, res, next) => {
   try {
     let { id } = req.params;
     let list = await List.findById(id);
@@ -83,7 +83,7 @@ router.get("/:id/edit", async (req, res, next) => {
   }
 });
 
-router.post("/:id", async (req, res, next) => {
+router.post("/:id", isLoggedIn, async (req, res, next) => {
   try {
     let result = listSchemaVal.validate(req.body);
     if (result.error) next(result.error);
@@ -110,7 +110,7 @@ router.post("/:id", async (req, res, next) => {
 });
 
 //delete route
-router.get("/:id/delete", async (req, res, next) => {
+router.get("/:id/delete", isLoggedIn, async (req, res, next) => {
   try {
     let { id } = req.params;
     const list = await List.findByIdAndDelete(id);

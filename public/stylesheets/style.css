@@ -17,6 +17,14 @@ body {
   flex-direction: column;
   min-height: 100vh;
 }
+input:focus {
+  outline: none !important;
+  box-shadow: none !important ;
+}
+textarea:focus {
+  outline: none !important;
+  box-shadow: none !important ;
+}
 .container {
   flex: 1;
 }
