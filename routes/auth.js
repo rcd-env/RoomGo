@@ -3,6 +3,8 @@ const router = express.Router({ mergeParams: true });
 const User = require("../models/user.model.js");
 const passport = require("passport");
 
+// sign-up routes
+
 router.get("/signup", (req, res, next) => {
   try {
     res.render("users/signup");
@@ -18,14 +20,19 @@ router.post("/signup", async (req, res, next) => {
       email,
       username,
     });
-    await User.register(newUser, password);
-    req.flash("success", "Welcome to RoomGO.");
-    res.redirect("/lists");
+    const currUser = await User.register(newUser, password);
+    req.login(currUser, (err) => {
+      if (err) return next(err);
+      req.flash("success", "Welcome to RoomGO.");
+      res.redirect("/lists");
+    });
   } catch (error) {
     req.flash("error", `${error.message}.`);
     res.redirect("/auth/signup");
   }
 });
+
+// login / sign-in routes
 
 router.get("/login", (req, res, next) => {
   try {
@@ -46,9 +53,25 @@ router.post(
       req.flash("success", "Welcome Back to RoomGO.");
       res.redirect("/lists");
     } catch (error) {
-      res.redirect("/auth/login");
+      next(error);
     }
   }
 );
+
+// logout routes
+
+router.get("/logout", (req, res, next) => {
+  try {
+    req.logout((err) => {
+      if (err) {
+        return next(err);
+      }
+      req.flash("success", "You are Logged out successfully.");
+      res.redirect("/lists");
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;

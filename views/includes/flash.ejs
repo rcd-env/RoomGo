@@ -1,8 +1,8 @@
 <% if(success && success.length) { %>
 <div
-  class="alert alert-success alert-dismissible fade show position-fixed bottom-0 start-25 mb-3 z-3"
+  class="alert alert-success alert-dismissible fade show position-fixed start-25 mb-3 z-3"
   role="alert"
-  style="min-width: 300px"
+  style="min-width: 300px; bottom: 5rem"
 >
   <strong><%= success %></strong>
   <button
@@ -14,9 +14,9 @@
 </div>
 <% } %> <% if(error && error.length) { %>
 <div
-  class="alert alert-danger alert-dismissible fade show position-fixed bottom-0 start-25 mb-3 z-3"
+  class="alert alert-danger alert-dismissible fade show position-fixed start-25 mb-3 z-3"
   role="alert"
-  style="min-width: 300px"
+  style="min-width: 300px; bottom: 5rem"
 >
   <strong><%= error %></strong>
   <button
