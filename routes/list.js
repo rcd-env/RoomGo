@@ -7,6 +7,8 @@ const List = require("../models/list.model.js");
 // schema validationsß
 const { validateList } = require("../middlewares/validateList.js");
 
+const { isOwner } = require("../middlewares/isOwner.js");
+
 // index route
 router.get("/", async (req, res, next) => {
   try {
@@ -53,7 +55,7 @@ router.get("/:id", async (req, res, next) => {
   try {
     let { id } = req.params;
     let list = await List.findOne({ _id: id })
-      .populate("reviews")
+      .populate({ path: "reviews", populate: { path: "author" } })
       .populate("owner");
     if (!list) {
       req.flash("error", "Place not found.");
@@ -67,7 +69,7 @@ router.get("/:id", async (req, res, next) => {
 });
 
 //update route
-router.get("/:id/edit", isLoggedIn, async (req, res, next) => {
+router.get("/:id/edit", isLoggedIn, isOwner, async (req, res, next) => {
   try {
     let { id } = req.params;
     let list = await List.findById(id);
@@ -82,30 +84,36 @@ router.get("/:id/edit", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.post("/:id", isLoggedIn, validateList, async (req, res, next) => {
-  try {
-    let { id } = req.params;
-    let { title, description, image, price, location, country } = req.body;
-    await List.findByIdAndUpdate(id, {
-      title,
-      description,
-      image: {
-        url: image,
-        filename: "listingimage",
-      },
-      price,
-      location,
-      country,
-    });
-    req.flash("success", "Place Updated Successfully.");
-    res.redirect(`/lists/${id}`);
-  } catch (error) {
-    next(error);
+router.post(
+  "/:id",
+  isLoggedIn,
+  isOwner,
+  validateList,
+  async (req, res, next) => {
+    try {
+      let { id } = req.params;
+      let { title, description, image, price, location, country } = req.body;
+      await List.findByIdAndUpdate(id, {
+        title,
+        description,
+        image: {
+          url: image,
+          filename: "listingimage",
+        },
+        price,
+        location,
+        country,
+      });
+      req.flash("success", "Place Updated Successfully.");
+      res.redirect(`/lists/${id}`);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 //delete route
-router.get("/:id/delete", isLoggedIn, async (req, res, next) => {
+router.get("/:id/delete", isLoggedIn, isOwner, async (req, res, next) => {
   try {
     let { id } = req.params;
     const list = await List.findByIdAndDelete(id);

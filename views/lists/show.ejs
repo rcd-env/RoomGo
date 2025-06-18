@@ -47,8 +47,10 @@
     </div>
   </div>
   <hr />
+  <% if(currUser) { %>
   <div class="col-10 offset-1 mb-4">
     <h4>Leave a Review :</h4>
+
     <form
       action="/lists/<%= list._id %>/reviews"
       method="post"
@@ -79,6 +81,8 @@
     </form>
   </div>
   <hr />
+  <% } %>
+
   <div class="col-10 offset-1 mb-4">
     <h4>What Our Customers Felt</h4>
     <hr />
@@ -86,10 +90,12 @@
 
     <div class="card">
       <div class="card-body">
+        <p class="card-text">Author : <%=review.author.username %></p>
         <p class="card-text">Rating : <%=review.rating %> &#9733;</p>
         <p class="card-text" style="text-align: justify">
           Review : <%=review.comment %>
         </p>
+        <% if(currUser && currUser._id.equals(review.author._id)) { %>
         <form
           action="/lists/<%=list._id%>/reviews/<%= review._id%>"
           method="post"
@@ -101,6 +107,7 @@
             Delete
           </button>
         </form>
+        <% } %>
       </div>
     </div>
     <hr />

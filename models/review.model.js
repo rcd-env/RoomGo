@@ -1,20 +1,24 @@
+const { required } = require("joi");
 const mongoose = require("mongoose");
 
-const reviewSchema = new mongoose.Schema({
-  comment: {
-    type: String,
-    required: true,
+const reviewSchema = new mongoose.Schema(
+  {
+    comment: {
+      type: String,
+      required: true,
+    },
+    rating: {
+      type: Number,
+      min: 1,
+      max: 5,
+      required: true,
+    },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
-  rating: {
-    type: Number,
-    min: 1,
-    max: 5,
-    required: true,
-  },
-  created_at: {
-    type: Date,
-    default: new Date(),
-  },
-});
+  { timestamps: true }
+);
 
 module.exports = mongoose.model("Review", reviewSchema);

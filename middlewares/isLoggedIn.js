@@ -3,7 +3,7 @@ module.exports.isLoggedIn = (req, res, next) => {
     req.session.redirectUrl = req.originalUrl;
     req.flash(
       "error",
-      "You must login/sign-up first to create a vacation spot."
+      "You must Sign Up/log In first to do some specific task."
     );
     return res.redirect("/auth/login");
   }

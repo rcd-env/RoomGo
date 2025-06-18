@@ -7,14 +7,19 @@ const Review = require("../models/review.model.js");
 // schema validations
 const { validateReview } = require("../middlewares/validateReview.js");
 
+//
+const { isLoggedIn } = require("../middlewares/isLoggedIn.js");
+const { isAuthor } = require("../middlewares/isAuthor.js");
+
 // review post route
-router.post("/", validateReview, async (req, res, next) => {
+router.post("/", isLoggedIn, validateReview, async (req, res, next) => {
   try {
     let { id } = req.params;
     let { rating, comment } = req.body;
     const review = await Review.create({
       rating,
       comment,
+      author: req.user,
     });
     const list = await List.findOne({ _id: id });
     list.reviews.push(review);
@@ -28,7 +33,7 @@ router.post("/", validateReview, async (req, res, next) => {
 
 // review delete route
 
-router.post("/:reviewId", async (req, res, next) => {
+router.post("/:reviewId", isLoggedIn, isAuthor, async (req, res, next) => {
   try {
     let { id, reviewId } = req.params;
     await Review.findByIdAndDelete(reviewId);
