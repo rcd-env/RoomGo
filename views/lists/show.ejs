@@ -9,14 +9,22 @@
           alt="..."
         />
         <div class="card-body">
-          <b class="show-title" style="font-size: 2rem"> <%=list.title%></b>
-          <p class="card-text show-text" style="margin-bottom: 5px">
-            <%=list.description%>
+          <p class="show-title" style="font-size: 2rem">
+            <b><%=list.title%></b>
+            <span style="font-size: 1rem"
+              >&lpar; Owned By : <%=list.owner.username%> &rpar;</span
+            >
           </p>
+
+          <i class="card-text show-text" style="margin-bottom: 5px">
+            <%=list.description%>
+          </i>
           <b>₹<%=list.price.toLocaleString("en-IN")%></b>
           <%=list.location%> &bull; <%=list.country%>
         </div>
         <br />
+
+        <% if(currUser && currUser._id.equals(list.owner._id) ){ %>
         <div class="row">
           <div class="col-12 col-md-4 mb-2">
             <form action="/lists/<%=list._id%>/edit">
@@ -27,13 +35,14 @@
             <form action="/lists/<%=list._id%>/delete">
               <button
                 class="btn btn-outline-danger w-100"
-                onclick="return confirm('Are you sure, You want to delete this list?')"
+                onclick="return confirm('Are you sure, You want to delete this spot?')"
               >
                 Delete
               </button>
             </form>
           </div>
         </div>
+        <% } %>
       </div>
     </div>
   </div>

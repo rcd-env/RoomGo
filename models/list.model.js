@@ -43,6 +43,10 @@ const listSchema = new mongoose.Schema({
       ref: "Review",
     },
   ],
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 listSchema.post("findOneAndDelete", async (list) => {

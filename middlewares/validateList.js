@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-const listSchema = Joi.object({
+const listSchemaVal = Joi.object({
   title: Joi.string().trim().min(1).required().messages({
     "string.empty": `"title" cannot be empty`,
     "string.min": `"title" cannot be just spaces`,
@@ -36,4 +36,8 @@ const listSchema = Joi.object({
     }),
 });
 
-module.exports = listSchema;
+module.exports.validateList = (req, res, next) => {
+  let result = listSchemaVal.validate(req.body);
+  if (result.error) return next(result.error);
+  next();
+};

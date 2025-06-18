@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-const mongoose = require("mongoose");
 const path = require("path");
 const engine = require("ejs-mate");
 require("dotenv").config();
@@ -22,7 +21,6 @@ const authRouter = require("./routes/auth.js");
 const ExpressError = require("./utils/ExpressError.js");
 // confidentials
 const PORT = process.env.PORT || 5500;
-const MONGO_URL = "mongodb://127.0.0.1:27017/RoomGo";
 
 // important tasks
 app.engine("ejs", engine);
@@ -53,14 +51,10 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-mongoose
-  .connect(MONGO_URL)
-  .then(() => {
-    console.log("Connection Successful");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+// database connection
+
+const startDB = require("./db/db.js");
+startDB();
 
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");

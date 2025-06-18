@@ -5,26 +5,22 @@ const router = express.Router({ mergeParams: true });
 const List = require("../models/list.model.js");
 const Review = require("../models/review.model.js");
 // schema validations
-const reviewSchemaVal = require("../utils/reviewSchemaVal.js");
+const { validateReview } = require("../middlewares/validateReview.js");
 
 // review post route
-router.post("/", async (req, res, next) => {
+router.post("/", validateReview, async (req, res, next) => {
   try {
-    let result = reviewSchemaVal.validate(req.body);
-    if (result.error) next(result.error);
-    else {
-      let { id } = req.params;
-      let { rating, comment } = req.body;
-      const review = await Review.create({
-        rating,
-        comment,
-      });
-      const list = await List.findOne({ _id: id });
-      list.reviews.push(review);
-      await list.save();
-      req.flash("success", "Review Added Successfully.");
-      res.redirect(`/lists/${id}`);
-    }
+    let { id } = req.params;
+    let { rating, comment } = req.body;
+    const review = await Review.create({
+      rating,
+      comment,
+    });
+    const list = await List.findOne({ _id: id });
+    list.reviews.push(review);
+    await list.save();
+    req.flash("success", "Review Added Successfully.");
+    res.redirect(`/lists/${id}`);
   } catch (err) {
     next(err);
   }

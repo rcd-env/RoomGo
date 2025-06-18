@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router({ mergeParams: true });
 const User = require("../models/user.model.js");
 const passport = require("passport");
+const { savedRedirectUrl } = require("../middlewares/savedRedirectUrl.js");
 
 // sign-up routes
 
@@ -44,6 +45,7 @@ router.get("/login", (req, res, next) => {
 
 router.post(
   "/login",
+  savedRedirectUrl,
   passport.authenticate("local", {
     failureRedirect: "/auth/login",
     failureFlash: true,
@@ -51,7 +53,8 @@ router.post(
   async (req, res) => {
     try {
       req.flash("success", "Welcome Back to RoomGO.");
-      res.redirect("/lists");
+      let redirectUrl = res.locals.redirectUrl || "/lists";
+      res.redirect(redirectUrl);
     } catch (error) {
       next(error);
     }
