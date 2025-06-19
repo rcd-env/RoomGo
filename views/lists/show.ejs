@@ -57,16 +57,46 @@
       class="needs-validation"
       novalidate
     >
-      <div class="mb-3">
-        <label for="rating" class="form-label">Rating :</label>
-        <select name="rating" id="rating" class="form-control">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-        </select>
-      </div>
+      <fieldset class="starability-checkmark mb-3">
+        <legend style="font-size: 16px">Rating:</legend>
+        <input
+          type="radio"
+          id="no-rate"
+          class="input-no-rate"
+          name="rating"
+          value="0"
+          checked
+          aria-label="No rating."
+        />
+        <input type="radio" id="first-rate1" name="rating" value="1" />
+        <label for="first-rate1" data-bs-toggle="tooltip" title="Terrible"
+          >1 star</label
+        >
+        <input type="radio" id="first-rate2" name="rating" value="2" />
+        <label
+          for="first-rate2"
+          data-bs-toggle="tooltip"
+          data-bs-placement="bottom"
+          title="Average"
+          >2 stars</label
+        >
+        <input type="radio" id="first-rate3" name="rating" value="3" />
+        <label for="first-rate3" data-bs-toggle="tooltip" title="Good"
+          >3 stars</label
+        >
+        <input type="radio" id="first-rate4" name="rating" value="4" />
+        <label
+          for="first-rate4"
+          data-bs-toggle="tooltip"
+          data-bs-placement="bottom"
+          title="Very good"
+          >4 stars</label
+        >
+        <input type="radio" id="first-rate5" name="rating" value="5" />
+        <label for="first-rate5" data-bs-toggle="tooltip" title="Amazing"
+          >5 stars</label
+        >
+      </fieldset>
       <div class="mb-3">
         <label for="comment" class="form-label">Review : </label>
         <textarea
@@ -90,10 +120,18 @@
 
     <div class="card">
       <div class="card-body">
-        <p class="card-text">Author : <%=review.author.username %></p>
-        <p class="card-text">Rating : <%=review.rating %> &#9733;</p>
-        <p class="card-text" style="text-align: justify">
-          Review : <%=review.comment %>
+        <p
+          class="card-text starability-result"
+          data-rating="<%= review.rating %>"
+        ></p>
+        <p
+          class="card-text"
+          style="text-align: justify; font-size: 1.4rem; font-style: italic"
+        >
+          &#10075;&#10075; <%=review.comment %>
+        </p>
+        <p class="card-text" style="font-size: 1.2rem">
+          By &#64;<%=review.author.username %>
         </p>
         <% if(currUser && currUser._id.equals(review.author._id)) { %>
         <form
@@ -116,3 +154,16 @@
     <% } %>
   </div>
 </body>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const tooltipTriggerList = [].slice.call(
+      document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    );
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl, {
+        delay: { show: 0, hide: 100 }, // ← appears instantly, hides fast
+      });
+    });
+  });
+</script>

@@ -5,7 +5,6 @@ const reviewSchemaVal = Joi.object({
     "string.empty": `"review" cannot be empty`,
     "string.min": `"review" cannot be just spaces`,
   }),
-
   rating: Joi.number().min(1).max(5).required(),
 });
 
