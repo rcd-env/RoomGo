@@ -55,6 +55,7 @@ footer {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  gap: 10px;
 }
 .f-info-socials {
   font-size: 2rem;
