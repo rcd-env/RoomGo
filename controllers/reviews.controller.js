@@ -1,18 +1,7 @@
-const express = require("express");
-const router = express.Router({ mergeParams: true });
-
-//models
-const List = require("../models/list.model.js");
 const Review = require("../models/review.model.js");
-// schema validations
-const { validateReview } = require("../middlewares/validateReview.js");
+const List = require("../models/list.model.js");
 
-//
-const { isLoggedIn } = require("../middlewares/isLoggedIn.js");
-const { isAuthor } = require("../middlewares/isAuthor.js");
-
-// review post route
-router.post("/", isLoggedIn, validateReview, async (req, res, next) => {
+module.exports.createReview = async (req, res, next) => {
   try {
     let { id } = req.params;
     let { rating, comment } = req.body;
@@ -29,11 +18,9 @@ router.post("/", isLoggedIn, validateReview, async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-});
+};
 
-// review delete route
-
-router.post("/:reviewId", isLoggedIn, isAuthor, async (req, res, next) => {
+module.exports.destroyReview = async (req, res, next) => {
   try {
     let { id, reviewId } = req.params;
     await Review.findByIdAndDelete(reviewId);
@@ -43,6 +30,4 @@ router.post("/:reviewId", isLoggedIn, isAuthor, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
-
-module.exports = router;
+};

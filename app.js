@@ -14,9 +14,9 @@ const LocalStrategy = require("passport-local");
 const User = require("./models/user.model.js");
 
 // routers
-const listRouter = require("./routes/list.js");
-const reviewRouter = require("./routes/review.js");
-const authRouter = require("./routes/auth.js");
+const listRouter = require("./routes/list.route.js");
+const reviewRouter = require("./routes/review.route.js");
+const authRouter = require("./routes/auth.route.js");
 // custom error
 const ExpressError = require("./utils/ExpressError.js");
 // confidentials
@@ -53,8 +53,8 @@ passport.deserializeUser(User.deserializeUser());
 
 // database connection
 
-const startDB = require("./db/db.js");
-startDB();
+const connectDB = require("./db/db.js");
+connectDB();
 
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");

@@ -1,34 +1,23 @@
-const express = require("express");
-const router = express.Router({ mergeParams: true });
-const { isLoggedIn } = require("../middlewares/isLoggedIn.js");
-//models
 const List = require("../models/list.model.js");
 
-// schema validationsß
-const { validateList } = require("../middlewares/validateList.js");
-
-const { isOwner } = require("../middlewares/isOwner.js");
-
-// index route
-router.get("/", async (req, res, next) => {
+module.exports.allLists = async (req, res, next) => {
   try {
     let lists = await List.find({});
     res.render("lists/index.ejs", { lists });
   } catch (error) {
     next(error);
   }
-});
+};
 
-//create route
-router.get("/new", isLoggedIn, (req, res, next) => {
+module.exports.renderCreateList = (req, res, next) => {
   try {
     return res.render("lists/create");
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.post("/", isLoggedIn, validateList, async (req, res, next) => {
+module.exports.createList = async (req, res, next) => {
   try {
     let { title, description, image, price, location, country } = req.body;
     await List.create({
@@ -48,10 +37,9 @@ router.post("/", isLoggedIn, validateList, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-//show route
-router.get("/:id", async (req, res, next) => {
+module.exports.showList = async (req, res, next) => {
   try {
     let { id } = req.params;
     let list = await List.findOne({ _id: id })
@@ -66,10 +54,9 @@ router.get("/:id", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-//update route
-router.get("/:id/edit", isLoggedIn, isOwner, async (req, res, next) => {
+module.exports.renderEditList = async (req, res, next) => {
   try {
     let { id } = req.params;
     let list = await List.findById(id);
@@ -82,38 +69,31 @@ router.get("/:id/edit", isLoggedIn, isOwner, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.post(
-  "/:id",
-  isLoggedIn,
-  isOwner,
-  validateList,
-  async (req, res, next) => {
-    try {
-      let { id } = req.params;
-      let { title, description, image, price, location, country } = req.body;
-      await List.findByIdAndUpdate(id, {
-        title,
-        description,
-        image: {
-          url: image,
-          filename: "listingimage",
-        },
-        price,
-        location,
-        country,
-      });
-      req.flash("success", "Place Updated Successfully.");
-      res.redirect(`/lists/${id}`);
-    } catch (error) {
-      next(error);
-    }
+module.exports.editList = async (req, res, next) => {
+  try {
+    let { id } = req.params;
+    let { title, description, image, price, location, country } = req.body;
+    await List.findByIdAndUpdate(id, {
+      title,
+      description,
+      image: {
+        url: image,
+        filename: "listingimage",
+      },
+      price,
+      location,
+      country,
+    });
+    req.flash("success", "Place Updated Successfully.");
+    res.redirect(`/lists/${id}`);
+  } catch (error) {
+    next(error);
   }
-);
+};
 
-//delete route
-router.get("/:id/delete", isLoggedIn, isOwner, async (req, res, next) => {
+module.exports.destroyList = async (req, res, next) => {
   try {
     let { id } = req.params;
     const list = await List.findByIdAndDelete(id);
@@ -122,6 +102,4 @@ router.get("/:id/delete", isLoggedIn, isOwner, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
-
-module.exports = router;
+};

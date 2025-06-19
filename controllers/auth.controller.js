@@ -1,20 +1,14 @@
-const express = require("express");
-const router = express.Router({ mergeParams: true });
 const User = require("../models/user.model.js");
-const passport = require("passport");
-const { savedRedirectUrl } = require("../middlewares/savedRedirectUrl.js");
 
-// sign-up routes
-
-router.get("/signup", (req, res, next) => {
+module.exports.renderSignUpUser = (req, res, next) => {
   try {
     res.render("users/signup");
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.post("/signup", async (req, res, next) => {
+module.exports.signUpUser = async (req, res, next) => {
   try {
     let { email, username, password } = req.body;
     let newUser = new User({
@@ -31,39 +25,27 @@ router.post("/signup", async (req, res, next) => {
     req.flash("error", `${error.message}.`);
     res.redirect("/auth/signup");
   }
-});
+};
 
-// login / sign-in routes
-
-router.get("/login", (req, res, next) => {
+module.exports.renderLogInUser = (req, res, next) => {
   try {
     res.render("users/login");
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.post(
-  "/login",
-  savedRedirectUrl,
-  passport.authenticate("local", {
-    failureRedirect: "/auth/login",
-    failureFlash: true,
-  }),
-  async (req, res) => {
-    try {
-      req.flash("success", "Welcome Back to RoomGO.");
-      let redirectUrl = res.locals.redirectUrl || "/lists";
-      res.redirect(redirectUrl);
-    } catch (error) {
-      next(error);
-    }
+module.exports.logInUser = async (req, res) => {
+  try {
+    req.flash("success", "Welcome Back to RoomGO.");
+    let redirectUrl = res.locals.redirectUrl || "/lists";
+    res.redirect(redirectUrl);
+  } catch (error) {
+    next(error);
   }
-);
+};
 
-// logout routes
-
-router.get("/logout", (req, res, next) => {
+module.exports.logOutUser = (req, res, next) => {
   try {
     req.logout((err) => {
       if (err) {
@@ -75,6 +57,4 @@ router.get("/logout", (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
-
-module.exports = router;
+};
