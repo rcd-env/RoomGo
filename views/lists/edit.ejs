@@ -3,11 +3,11 @@
 <body>
   <div class="row-1 mt-5 mb-5">
     <div class="col-10 offset-1 col-md-6 offset-md-3">
-      <!-- <h1>Create A New List :</h1> -->
       <form
         action="/lists/<%=list._id%>"
         method="post"
         class="needs-validation"
+        enctype="multipart/form-data"
         novalidate
       >
         <div class="mb-3 mt-2">
@@ -37,16 +37,30 @@
         </div>
 
         <div class="mb-3">
-          <label for="imageurl" class="form-label">Image URL</label>
-          <input
-            class="form-control"
-            id="imageurl"
-            type="text"
-            name="image"
-            value="<%=list.image.url%>"
-            required
-          />
-          <div class="invalid-feedback">Please provide us the ImageURL.</div>
+          <label for="imageurl" class="form-label">Image</label>
+          <input class="form-control" id="imageurl" type="file" name="image" />
+          <button
+            type="button"
+            id="previewBtn"
+            class="btn btn-outline-dark mt-2"
+          >
+            Preview Previous Image
+          </button>
+          <div
+            id="imagePreviewContainer"
+            style="display: none; margin-top: 10px"
+          >
+            <img
+              id="imagePreview"
+              src="<%= list.image.url %>"
+              alt="Current Image"
+              style="
+                max-width: 100%;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+              "
+            />
+          </div>
         </div>
         <div class="row">
           <div class="mb-3 col-md-5">
@@ -98,3 +112,20 @@
     </div>
   </div>
 </body>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const previewBtn = document.getElementById("previewBtn");
+    const imagePreviewContainer = document.getElementById(
+      "imagePreviewContainer"
+    );
+    previewBtn.addEventListener("click", function () {
+      if (imagePreviewContainer.style.display === "none") {
+        imagePreviewContainer.style.display = "block";
+        previewBtn.textContent = "Hide Image Preview";
+      } else {
+        imagePreviewContainer.style.display = "none";
+        previewBtn.textContent = "Preview Previous Image";
+      }
+    });
+  });
+</script>

@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const ExpressError = require("../utils/ExpressError.js");
 
 const listSchemaVal = Joi.object({
   title: Joi.string().trim().min(1).required().messages({
@@ -22,22 +23,13 @@ const listSchemaVal = Joi.object({
     "string.empty": `"country" cannot be empty`,
     "string.min": `"country" cannot be just spaces`,
   }),
-  image: Joi.string()
-    .allow("", null)
-    .custom((value, helpers) => {
-      if (typeof value === "string" && value.trim() === "" && value !== "") {
-        // This means value is blank spaces like "   ", not truly empty ""
-        return helpers.error("string.invalid");
-      }
-      return value;
-    })
-    .messages({
-      "string.invalid": `"image" cannot be just spaces`,
-    }),
 });
 
 module.exports.validateList = (req, res, next) => {
   let result = listSchemaVal.validate(req.body);
   if (result.error) return next(result.error);
+  // if (!req.file) {
+  //   return next(new ExpressError("400", `"image" file is required`));
+  // }
   next();
 };

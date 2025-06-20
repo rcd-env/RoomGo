@@ -19,13 +19,18 @@ module.exports.renderCreateList = (req, res, next) => {
 
 module.exports.createList = async (req, res, next) => {
   try {
-    let { title, description, image, price, location, country } = req.body;
+    let { path: url, filename } = req.file;
+    if (!url || !filename) {
+      req.flash("error", "Image upload failed. Please try again.");
+      return res.redirect("/lists/new");
+    }
+    let { title, description, price, location, country } = req.body;
     await List.create({
       title,
       description,
       image: {
-        url: image,
-        filename: "listingimage",
+        url,
+        filename,
       },
       price,
       location,
@@ -74,18 +79,20 @@ module.exports.renderEditList = async (req, res, next) => {
 module.exports.editList = async (req, res, next) => {
   try {
     let { id } = req.params;
-    let { title, description, image, price, location, country } = req.body;
-    await List.findByIdAndUpdate(id, {
+    let { title, description, price, location, country } = req.body;
+    let updatedList = await List.findByIdAndUpdate(id, {
       title,
       description,
-      image: {
-        url: image,
-        filename: "listingimage",
-      },
       price,
       location,
       country,
     });
+    if (req.file) {
+      let { path: url, filename } = req.file;
+      updatedList.image = { url, filename };
+      await updatedList.save();
+    }
+
     req.flash("success", "Place Updated Successfully.");
     res.redirect(`/lists/${id}`);
   } catch (error) {

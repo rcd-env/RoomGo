@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true });
 
+//
+const multer = require("multer");
+const { cloudinary, upload } = require("../cloudConfig.js");
 // schema validations middleware
 const { validateList } = require("../middlewares/validateList.middleware.js");
 // other middlewares
@@ -23,7 +26,7 @@ router.get("/", allLists);
 //create route
 router.get("/new", isLoggedIn, renderCreateList);
 
-router.post("/", isLoggedIn, validateList, createList);
+router.post("/", isLoggedIn, upload.single("image"), validateList, createList);
 
 //show route
 router.get("/:id", showList);
@@ -31,7 +34,14 @@ router.get("/:id", showList);
 //update route
 router.get("/:id/edit", isLoggedIn, isOwner, renderEditList);
 
-router.post("/:id", isLoggedIn, isOwner, validateList, editList);
+router.post(
+  "/:id",
+  isLoggedIn,
+  isOwner,
+  upload.single("image"),
+  validateList,
+  editList
+);
 
 //delete route
 router.get("/:id/delete", isLoggedIn, isOwner, destroyList);

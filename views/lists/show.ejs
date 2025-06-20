@@ -11,9 +11,6 @@
         <div class="card-body">
           <p class="show-title" style="font-size: 2rem">
             <b><%=list.title%></b>
-            <span style="font-size: 1rem"
-              >&lpar; Owned By : <%=list.owner.username%> &rpar;</span
-            >
           </p>
 
           <i
@@ -26,6 +23,11 @@
           <%=list.location%> &bull; <%=list.country%>
         </div>
         <br />
+        <p style="font-size: 1rem">
+          <% if(currUser && currUser._id.equals(list.owner._id) ){ %> &lpar;
+          Owner : You &rpar; <% } else {%> &lpar; Owner :
+          <%=list.owner.username%> &rpar; <% } %>
+        </p>
 
         <% if(currUser && currUser._id.equals(list.owner._id) ){ %>
         <div class="row">
