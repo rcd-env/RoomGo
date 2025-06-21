@@ -176,8 +176,9 @@
 </body>
 
 <script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBJ4o2zaRvOLr1eHAM-ebbP_6x4v4ZzWfU&loading=async&libraries=maps&v=beta"
+  src="https://maps.googleapis.com/maps/api/js?key=<%= GOOGLE_MAP_API_KEY%>&loading=async&libraries=maps&v=beta"
   defer
+  async
 ></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -195,7 +196,7 @@
     const location = "<%= list.location %>";
     const country = "<%= list.country %>";
     const address = `${location}, ${country}`;
-    const apiKey = "AIzaSyBJ4o2zaRvOLr1eHAM-ebbP_6x4v4ZzWfU";
+    const apiKey = "<%= GOOGLE_MAP_API_KEY %>";
 
     const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
       address
