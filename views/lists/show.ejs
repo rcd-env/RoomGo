@@ -19,14 +19,14 @@
           >
             <%=list.description%>
           </i>
-          <b>₹<%=list.price.toLocaleString("en-IN")%></b>
+          <b>₹ <%=list.price.toLocaleString("en-IN")%></b>
           <%=list.location%> &bull; <%=list.country%>
         </div>
         <br />
         <p style="font-size: 1rem">
-          <% if(currUser && currUser._id.equals(list.owner._id) ){ %> &lpar;
-          Owner : You &rpar; <% } else {%> &lpar; Owner :
-          <%=list.owner.username%> &rpar; <% } %>
+          <% if(currUser && currUser._id.equals(list.owner._id) ){ %>&#9999;
+          Owner : You <% } else {%>&#9999; Owner : <%=list.owner.username%> <% }
+          %>
         </p>
 
         <% if(currUser && currUser._id.equals(list.owner._id) ){ %>
@@ -52,10 +52,11 @@
     </div>
   </div>
   <hr />
-  <% if(currUser) { %>
-  <div class="col-10 offset-1 mb-4">
-    <h4>Leave a Review :</h4>
 
+  <div class="col-10 offset-1 mb-4">
+    <h4>Leave A Review</h4>
+    <hr />
+    <% if (currUser) { %>
     <form
       action="/lists/<%= list._id %>/reviews"
       method="post"
@@ -114,9 +115,11 @@
       </div>
       <button class="btn btn-outline-secondary w-100">Add Review</button>
     </form>
+    <% } else { %>
+    <p>SignUp/LogIn to leave a review.</p>
+    <% } %>
   </div>
   <hr />
-  <% } %>
 
   <div class="col-10 offset-1 mb-4">
     <h4>What Our Customers Felt</h4>
@@ -135,10 +138,13 @@
         >
           &#10075;&#10075; <%=review.comment %>
         </p>
+        <% if(currUser && currUser._id.equals(list.owner._id) ){ %>
+        <p class="card-text" style="font-size: 1.2rem">&#9758; You</p>
+        <% } else { %>
         <p class="card-text" style="font-size: 1.2rem">
-          By &#64;<%=review.author.username %>
+          &#9758; <%=review.author.username %>
         </p>
-        <% if(currUser && currUser._id.equals(review.author._id)) { %>
+        <% } %> <% if(currUser && currUser._id.equals(review.author._id)) { %>
         <form
           action="/lists/<%=list._id%>/reviews/<%= review._id%>"
           method="post"
@@ -150,6 +156,8 @@
             Delete
           </button>
         </form>
+        <% } else {%>
+        <button class="btn btn-outline-primary">Book The Spot</button>
         <% } %>
       </div>
     </div>
@@ -158,8 +166,19 @@
     <p>No Reviews Yet.</p>
     <% } %>
   </div>
+  <hr />
+  <div class="col-10 offset-1 mb-4">
+    <h4>Where You Will Be</h4>
+    <hr />
+
+    <div id="map" style="height: 400px; border-radius: 12px"></div>
+  </div>
 </body>
 
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBJ4o2zaRvOLr1eHAM-ebbP_6x4v4ZzWfU&loading=async&libraries=maps&v=beta"
+  defer
+></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const tooltipTriggerList = [].slice.call(
@@ -167,8 +186,46 @@
     );
     tooltipTriggerList.map(function (tooltipTriggerEl) {
       return new bootstrap.Tooltip(tooltipTriggerEl, {
-        delay: { show: 0, hide: 100 }, // ← appears instantly, hides fast
+        delay: { show: 0, hide: 100 },
       });
     });
   });
+
+  async function initMap() {
+    const location = "<%= list.location %>";
+    const country = "<%= list.country %>";
+    const address = `${location}, ${country}`;
+    const apiKey = "AIzaSyBJ4o2zaRvOLr1eHAM-ebbP_6x4v4ZzWfU";
+
+    const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+      address
+    )}&key=${apiKey}`;
+
+    try {
+      const response = await fetch(geocodeUrl);
+      const data = await response.json();
+
+      if (data.status === "OK") {
+        const coords = data.results[0].geometry.location;
+
+        const map = new google.maps.Map(document.getElementById("map"), {
+          center: coords,
+          zoom: 9,
+        });
+
+        new google.maps.Marker({
+          position: coords,
+          map: map,
+          title: address,
+        });
+      } else {
+        console.error("Geocoding failed:", data.status);
+        document.getElementById("map").innerHTML =
+          "<p>Location could not be loaded.</p>";
+      }
+    } catch (err) {
+      console.error("Error fetching location:", err);
+    }
+  }
+  initMap();
 </script>
