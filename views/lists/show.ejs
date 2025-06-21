@@ -3,41 +3,62 @@
   <div class="row-1 mt-4">
     <div class="col-10 offset-1">
       <div class="card">
-        <img
-          src="<%=list.image.url%>"
-          class="card-img-top show-img"
-          alt="..."
-        />
-        <div class="card-body">
-          <p class="show-title" style="font-size: 2rem">
-            <b><%=list.title%></b>
-          </p>
+        <!-- Responsive Row for Large Screens -->
+        <div class="row g-4 align-items-center">
+          <!-- Image Column -->
+          <div class="col-12 col-md-6">
+            <img
+              src="<%= list.image.url %>"
+              class="img-fluid rounded show-img"
+              alt="..."
+              style="
+                height: 300px !important;
+                width: 100%;
+                object-fit: cover;
+                object-position: center;
+              "
+            />
+          </div>
 
-          <i
-            class="card-text show-text"
-            style="text-align: justify; margin-bottom: 5px"
-          >
-            <%=list.description%>
-          </i>
-          <b>₹ <%=list.price.toLocaleString("en-IN")%></b>
-          <%=list.location%> &bull; <%=list.country%>
+          <!-- Details Column -->
+          <div class="col-12 col-md-6">
+            <div class="card-body p-0">
+              <p class="show-title" style="font-size: 2rem">
+                <b><%= list.title %></b>
+              </p>
+              <p
+                class="card-text show-text d-block mb-2"
+                style="text-align: justify"
+              >
+                &#10075;<i><%= list.description %></i>
+              </p>
+
+              <p class="mb-1">
+                <b>₹ <%= list.price.toLocaleString("en-IN") %></b>
+              </p>
+              <p class="mb-3">
+                <%= list.location %> &bull; <%= list.country %>
+              </p>
+
+              <p style="font-size: 1rem">
+                <% if (currUser && currUser._id.equals(list.owner._id)) { %>
+                &#9999; Owner : You <% } else { %> &#9999; Owner : <%=
+                list.owner.username %> <% } %>
+              </p>
+            </div>
+          </div>
         </div>
-        <br />
-        <p style="font-size: 1rem">
-          <% if(currUser && currUser._id.equals(list.owner._id) ){ %>&#9999;
-          Owner : You <% } else {%>&#9999; Owner : <%=list.owner.username%> <% }
-          %>
-        </p>
 
-        <% if(currUser && currUser._id.equals(list.owner._id) ){ %>
-        <div class="row">
+        <!-- Buttons for owner -->
+        <% if (currUser && currUser._id.equals(list.owner._id)) { %>
+        <div class="row mt-3">
           <div class="col-12 col-md-4 mb-2">
-            <form action="/lists/<%=list._id%>/edit">
+            <form action="/lists/<%= list._id %>/edit">
               <button class="btn btn-outline-info w-100">Edit</button>
             </form>
           </div>
           <div class="col-12 col-md-8">
-            <form action="/lists/<%=list._id%>/delete">
+            <form action="/lists/<%= list._id %>/delete">
               <button
                 class="btn btn-outline-danger w-100"
                 onclick="return confirm('Are you sure, You want to delete this spot?')"
@@ -51,6 +72,7 @@
       </div>
     </div>
   </div>
+
   <hr />
 
   <div class="col-10 offset-1 mb-4">
@@ -175,11 +197,7 @@
   </div>
 </body>
 
-<script
-  src="https://maps.googleapis.com/maps/api/js?key=<%= GOOGLE_MAP_API_KEY%>&loading=async&libraries=maps&v=beta"
-  defer
-  async
-></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const tooltipTriggerList = [].slice.call(
@@ -192,41 +210,50 @@
     });
   });
 
-  async function initMap() {
-    const location = "<%= list.location %>";
-    const country = "<%= list.country %>";
-    const address = `${location}, ${country}`;
-    const apiKey = "<%= GOOGLE_MAP_API_KEY %>";
+  // Initialize the map
+  document.addEventListener("DOMContentLoaded", async function () {
+    const address = `<%= list.location %>, <%= list.country %>`;
 
-    const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+    // Call Nominatim to get coordinates
+    const geocodeUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
       address
-    )}&key=${apiKey}`;
+    )}`;
 
     try {
       const response = await fetch(geocodeUrl);
       const data = await response.json();
 
-      if (data.status === "OK") {
-        const coords = data.results[0].geometry.location;
-
-        const map = new google.maps.Map(document.getElementById("map"), {
-          center: coords,
-          zoom: 9,
-        });
-
-        new google.maps.Marker({
-          position: coords,
-          map: map,
-          title: address,
-        });
-      } else {
-        console.error("Geocoding failed:", data.status);
+      if (data.length === 0) {
+        console.error("No results found for location:", address);
         document.getElementById("map").innerHTML =
-          "<p>Location could not be loaded.</p>";
+          "<p>Location not found 😞</p>";
+        return;
       }
+
+      const lat = parseFloat(data[0].lat);
+      const lon = parseFloat(data[0].lon);
+
+      const map = L.map("map").setView([lat, lon], 15);
+
+      L.tileLayer(
+        `https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=<%= mapTilesApiKey %>`,
+        {
+          maxZoom: 19,
+          attribution: "&copy; MapTiler & OpenStreetMap contributors",
+        },
+        {
+          attribution: "&copy; MapTiler & OpenStreetMap contributors",
+        }
+      ).addTo(map);
+
+      L.marker([lat, lon])
+        .addTo(map)
+        .bindPopup(`Exact location will be provided after booking the spot 🤓`)
+        .openPopup();
     } catch (err) {
-      console.error("Error fetching location:", err);
+      console.error("Geocoding error:", err);
+      document.getElementById("map").innerHTML =
+        "<p style='position: relative;top : 10px;left: 10px;'>Something went wrong loading the map 🥺</p>";
     }
-  }
-  initMap();
+  });
 </script>

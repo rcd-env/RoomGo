@@ -60,7 +60,7 @@ app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user;
-  res.locals.GOOGLE_MAP_API_KEY = process.env.GOOGLE_MAP_API_KEY;
+  res.locals.mapTilesApiKey = process.env.MAP_TILES_API_KEY;
   next();
 });
 
