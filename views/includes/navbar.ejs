@@ -24,19 +24,19 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link" href="/lists/new">Host a Spot</a>
+        <a class="nav-link" href="/lists/new">Host Your Spot</a>
       </li>
     </ul>
-    <ul class="navbar-nav ms-auto me-4 gap-2">
+    <ul class="navbar-nav ms-auto me-4 gap-0 gap-md-2">
       <% if (!currUser) { %>
-      <li class="nav-item rounded-pill border border-dark px-3 py-1">
+      <li class="nav-item py-md-1">
         <a class="nav-link" href="/auth/signup">Sign Up</a>
       </li>
-      <li class="nav-item rounded-pill border border-dark px-3 py-1">
+      <li class="nav-item py-md-1">
         <a class="nav-link" href="/auth/login">Log In</a>
       </li>
       <% } else { %>
-      <li class="nav-item rounded-pill border border-dark px-3 py-1">
+      <li class="nav-item py-md-1">
         <a class="nav-link" href="/auth/logout">Log Out</a>
       </li>
       <% } %>

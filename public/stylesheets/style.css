@@ -119,7 +119,8 @@ footer {
 }
 
 .card-each:hover {
-  transform: translateY(-4px);
+  /* transform: translateY(-4px); */
+  opacity: 0.9;
 }
 
 .card img {
@@ -198,6 +199,16 @@ footer {
   #map {
     height: 300px !important;
   }
+  .form-switch {
+    margin-top: 1rem !important;
+    margin-right: 35% !important;
+    /* padding-right: 11rem !important; */
+  }
+  /* #switchCheckDefault {
+    position: relative !important;
+    top: 0 !important;
+    left: 0px !important;
+  } */
 }
 /* form  */
 .form-main {
