@@ -66,7 +66,7 @@ app.use((req, res, next) => {
 
 // root route
 app.get("/", (req, res) => {
-  res.render("home");
+  res.redirect("/lists");
 });
 
 // list routes
