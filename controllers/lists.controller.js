@@ -1,4 +1,5 @@
 const List = require("../models/list.model.js");
+const Booking = require("../models/booking.model.js");
 
 module.exports.allLists = async (req, res, next) => {
   try {
@@ -55,7 +56,16 @@ module.exports.showList = async (req, res, next) => {
       req.flash("error", "Place not found.");
       res.redirect("/lists");
     } else {
-      res.render("lists/show", { list });
+      let hasExistingBooking = false;
+      if (req.user) {
+        const existingBooking = await Booking.findOne({
+          list: id,
+          user: req.user._id,
+        });
+        hasExistingBooking = !!existingBooking;
+      }
+
+      res.render("lists/show", { list, hasExistingBooking });
     }
   } catch (error) {
     next(error);

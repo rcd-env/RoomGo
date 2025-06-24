@@ -1,112 +1,177 @@
 <% layout('layouts/boilerplate') -%>
 
+<style>
+  body {
+    background-color: #ffffff;
+    color: #000000;
+  }
+
+  .profile-card-item {
+    background-color: #fff;
+    border: 1.5px solid #000;
+    border-radius: 12px;
+    transition: 0.2s ease-in-out;
+  }
+
+  .profile-card-item:hover {
+    opacity: 0.5;
+  }
+
+  .listing-img {
+    width: 40px !important;
+    height: 40px !important;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #000;
+  }
+
+  /* .cancel-booking-btn {
+    border: 1.5px solid #000;
+    color: #000;
+    transition: 0.2s;
+  }
+
+  .cancel-booking-btn:hover {
+    background-color: #000;
+    color: #fff;
+  } */
+
+  h5,
+  h6,
+  p {
+    margin: 0;
+  }
+
+  hr {
+    border-top: 1.5px solid #000;
+  }
+  .listing-img {
+    width: 40px !important;
+    height: 40px !important;
+    object-fit: cover !important;
+    border-radius: 6px;
+    display: block;
+  }
+  .card .listing-img {
+    width: 60px !important;
+    height: 60px !important;
+    margin-bottom: 0 !important;
+  }
+</style>
+
 <body>
   <main class="container py-5">
     <div class="row justify-content-center">
       <div class="col-12">
-        <div class="card">
-          <div class="card-body bg-white text-black">
-            <!-- Profile Header -->
-            <div class="d-flex align-items-center mb-1">
-              <div
-                class="rounded-circle bg-black text-white d-flex justify-content-center align-items-center"
-                style="width: 60px; height: 60px; font-size: 1.5rem"
-              >
-                <%= currUser.username[0].toUpperCase() %>
-              </div>
-              <div class="ms-3">
-                <h4 class="mb-0"><%= currUser.username %></h4>
-                <p class="text-muted mb-0" style="font-size: 0.9rem">
-                  <%= currUser.email %>
-                </p>
-              </div>
+        <div class="mb-4">
+          <div class="d-flex align-items-center mb-4">
+            <div
+              class="rounded-circle bg-black text-white d-flex justify-content-center align-items-center"
+              style="width: 60px; height: 60px; font-size: 1.5rem"
+            >
+              <%= currUser.username[0].toUpperCase() %>
             </div>
-
-            <hr class="border-dark" />
-
-            <!-- Profile Info -->
-            <div class="mb-0">
-              <h6 class="text-uppercase text-muted">Member Since</h6>
-              <p class="mb-0"><%= currUser.createdAt.toDateString() %></p>
-              <hr />
+            <div class="ms-3">
+              <h4><%= currUser.username %></h4>
+              <p class="text-muted"><%= currUser.email %></p>
             </div>
-
-            <!-- Bookings Section -->
-            <div class="mt-0">
-              <h5 class="mb-3">Your Bookings</h5>
-
-              <% if (bookings && bookings.length > 0) { %>
-              <div class="row">
-                <% bookings.forEach(booking => { %>
-                <div class="col-12 col-md-6 col-lg-4 mb-4">
-                  <!-- Make the entire card clickable and direct to list page -->
-                  <a
-                    href="/lists/<%= booking.list._id %>"
-                    class="text-decoration-none text-reset"
-                  >
-                    <div class="card h-100 hover-shadow">
-                      <img
-                        src="<%= booking.list.image.url %>"
-                        class="card-img-top"
-                        alt="<%= booking.list.title %>"
-                        style="height: 180px; object-fit: cover"
-                      />
-                      <div class="card-body">
-                        <h5 class="card-title"><%= booking.list.title %></h5>
-                        <p class="card-text">
-                          <%= booking.list.location %> &bull; <%=
-                          booking.list.country %>
-                        </p>
-                        <p class="mb-1">
-                          <span class="fw-bold">Check-in:</span> <%=
-                          booking.checkIn.toLocaleDateString("en-IN") %>
-                        </p>
-                        <p class="mb-1">
-                          <span class="fw-bold">Check-out:</span> <%=
-                          booking.checkOut.toLocaleDateString("en-IN") %>
-                        </p>
-                        <p class="mb-2">
-                          <span class="fw-bold">Total:</span> ₹<%=
-                          booking.totalPrice.toLocaleString("en-IN") %>
-                          <span class="small text-muted">(incl. GST)</span>
-                        </p>
-
-                        <div
-                          class="d-flex justify-content-between align-items-center"
-                        >
-                          <!-- Cancel button that triggers modal -->
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-outline-danger cancel-booking-btn"
-                            data-list-id="<%= booking.list._id %>"
-                            data-booking-id="<%= booking._id %>"
-                            onclick="event.stopPropagation();"
-                          >
-                            Cancel Booking
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-                <% }); %>
-              </div>
-              <% } else { %>
-              <div class="alert alert-info">
-                You haven't booked any spots yet.
-                <a href="/lists" class="alert-link">Explore available spots</a>
-                and book your next stay!
-              </div>
-              <% } %>
-            </div>
-
-            <!-- Action Buttons -->
           </div>
+
+          <hr />
+
+          <!-- Your Hosted Spots -->
+          <h5 class="mb-3">Your Hosted Spots</h5>
+          <% if (hostedSpots && hostedSpots.length > 0) { %> <%
+          hostedSpots.forEach(spot => { %>
+          <a
+            href="/lists/<%= spot._id %>"
+            class="text-decoration-none text-black"
+          >
+            <div class="card mb-3 profile-card-item">
+              <div class="d-flex align-items-center gap-3">
+                <img
+                  src="<%= spot.image.url %>"
+                  alt="Spot Image"
+                  class="listing-img"
+                  height="40"
+                  width="40"
+                />
+                <div class="flex-grow-1">
+                  <h6><%= spot.title %></h6>
+                  <p class="text-muted small">
+                    <%= spot.location %> • <%= spot.country %>
+                  </p>
+                </div>
+                <div class="text-end">
+                  <p class="fw-semibold mb-0">Price</p>
+                  <p class="mb-0">₹<%= spot.price.toLocaleString("en-IN") %></p>
+                </div>
+              </div>
+            </div>
+          </a>
+          <hr />
+          <% }) %> <% } else { %>
+          <div class="alert alert-info">No hosted spots yet.</div>
+          <hr />
+          <% } %>
+
+          <!-- Your Bookings -->
+          <h5 class="mb-3">Your Bookings</h5>
+          <% if (bookings && bookings.length > 0) { %> <%
+          bookings.forEach(booking => { %>
+          <div class="row mb-3">
+            <div class="col-12 col-lg-10">
+              <a
+                href="/lists/<%= booking.list._id %>"
+                class="text-decoration-none text-black"
+              >
+                <div class="card profile-card-item">
+                  <div class="d-flex align-items-center gap-3">
+                    <img
+                      src="<%= booking.list.image.url %>"
+                      alt="Booking Image"
+                      class="listing-img"
+                    />
+                    <div class="flex-grow-1">
+                      <h6><%= booking.list.title %></h6>
+                      <p class="text-muted small">
+                        Check-in: <%=
+                        booking.checkIn.toLocaleDateString("en-IN") %>.
+                      </p>
+                      <p class="text-muted small">
+                        Check-out: <%=
+                        booking.checkOut.toLocaleDateString("en-IN") %>
+                      </p>
+                    </div>
+                    <div class="text-end">
+                      <p class="text-muted small">total</p>
+                      <p class="fw-bold">
+                        ₹<%= booking.totalPrice.toLocaleString("en-IN") %>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+            <div class="col-12 col-lg-2 mt-2 mt-lg-0 d-flex align-items-center">
+              <button
+                class="btn btn-outline-danger cancel-booking-btn w-100 py-lg-3"
+                data-list-id="<%= booking.list._id %>"
+                data-booking-id="<%= booking._id %>"
+              >
+                Cancel Booking
+              </button>
+            </div>
+          </div>
+          <hr />
+          <% }) %> <% } else { %>
+          <div class="alert alert-info">No bookings yet.</div>
+
+          <% } %>
         </div>
       </div>
     </div>
   </main>
-
   <!-- Cancel Booking Confirmation Modal -->
   <div
     class="modal fade"
@@ -149,30 +214,25 @@
       </div>
     </div>
   </div>
+</body>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const cancelButtons = document.querySelectorAll(".cancel-booking-btn");
+    const cancelForm = document.getElementById("cancelBookingForm");
+    const cancelModalElement = document.getElementById("cancelBookingModal");
 
-  <script>
-    // Set up cancel booking modal
-    document.addEventListener("DOMContentLoaded", function () {
-      const cancelButtons = document.querySelectorAll(".cancel-booking-btn");
-      const cancelForm = document.getElementById("cancelBookingForm");
-      // Initialize the modal once
-      const cancelModalElement = document.getElementById("cancelBookingModal");
+    cancelButtons.forEach((button) => {
+      button.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
 
-      cancelButtons.forEach((button) => {
-        button.addEventListener("click", function (e) {
-          e.preventDefault();
-          e.stopPropagation();
+        const listId = this.getAttribute("data-list-id");
+        const bookingId = this.getAttribute("data-booking-id");
+        cancelForm.action = `/lists/${listId}/book/cancel/${bookingId}`;
 
-          // Set the form action based on the button's data attributes
-          const listId = this.getAttribute("data-list-id");
-          const bookingId = this.getAttribute("data-booking-id");
-          cancelForm.action = `/lists/${listId}/book/cancel/${bookingId}`;
-
-          // Show the modal using Bootstrap's modal API
-          const cancelModal = new bootstrap.Modal(cancelModalElement);
-          cancelModal.show();
-        });
+        const cancelModal = new bootstrap.Modal(cancelModalElement);
+        cancelModal.show();
       });
     });
-  </script>
-</body>
+  });
+</script>

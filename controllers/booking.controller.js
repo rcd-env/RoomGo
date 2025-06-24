@@ -60,15 +60,20 @@ module.exports.createBooking = async (req, res, next) => {
   }
 };
 
-// Get user bookings for profile page
+// Get user bookings and hosted listings for profile page
 module.exports.getUserBookings = async (req, res, next) => {
   try {
-    // Get user with bookings
+    // Get user bookings
     const bookings = await Booking.find({ user: req.user._id })
       .populate("list")
       .sort({ createdAt: -1 });
 
-    res.render("users/profile", { bookings });
+    // Get user's hosted listings
+    const hostedSpots = await List.find({ owner: req.user._id }).sort({
+      createdAt: -1,
+    });
+
+    res.render("users/profile", { bookings, hostedSpots });
   } catch (err) {
     next(err);
   }

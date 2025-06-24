@@ -220,6 +220,21 @@
 
           <% } else { %>
           <div class="col-12 mb-2">
+            <% if (hasExistingBooking) { %>
+            <button
+              class="btn btn-secondary w-100"
+              disabled
+              title="You have already booked this spot"
+            >
+              <i class="fas fa-check-circle me-2"></i>
+              Already Booked by You
+            </button>
+            <p class="text-center text-muted small mt-2 mb-0">
+              <i class="fas fa-info-circle me-1"></i>
+              You can view your booking details in your
+              <a href="/profile" class="text-decoration-none">profile</a>
+            </p>
+            <% } else { %>
             <button
               class="btn btn-outline-dark w-100"
               data-bs-toggle="modal"
@@ -228,6 +243,7 @@
               Book Now (₹<%= Math.round(list.price *
               1.18).toLocaleString("en-IN") %> incl. GST)
             </button>
+            <% } %>
           </div>
           <% } %>
         </div>

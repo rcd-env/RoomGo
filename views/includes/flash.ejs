@@ -1,8 +1,8 @@
 <% if(success && success.length) { %>
 <div
-  class="alert alert-success alert-dismissible fade show position-fixed start-25 mb-3 z-3"
+  class="alert alert-success alert-dismissible fade show position-fixed bottom-0 start-50 translate-middle-x mb-3"
   role="alert"
-  style="min-width: 300px"
+  style="min-width: 350px; max-width: 500px; z-index: 1050"
 >
   <strong><%= success %></strong>
   <button
@@ -14,9 +14,9 @@
 </div>
 <% } %> <% if(error && error.length) { %>
 <div
-  class="alert alert-danger alert-dismissible fade show position-fixed start-25 mb-3 z-3"
+  class="alert alert-danger alert-dismissible fade show position-fixed bottom-0 start-50 translate-middle-x mb-3"
   role="alert"
-  style="min-width: 300px"
+  style="min-width: 350px; max-width: 500px; z-index: 1050"
 >
   <strong><%= error %></strong>
   <button
@@ -29,11 +29,17 @@
 <% } %>
 
 <script>
-  setTimeout(() => {
-    const alerts = document.querySelectorAll(".alert");
-    alerts.forEach((alert) => {
-      alert.classList.remove("show");
-      alert.classList.add("hide");
-    });
-  }, 5000);
+  // Auto-dismiss flash messages after 5 seconds
+  document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(() => {
+      const alerts = document.querySelectorAll(".alert");
+      alerts.forEach((alert) => {
+        if (alert.classList.contains("show")) {
+          // Use Bootstrap's alert API to properly close
+          const bsAlert = new bootstrap.Alert(alert);
+          bsAlert.close();
+        }
+      });
+    }, 5000);
+  });
 </script>

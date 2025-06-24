@@ -32,7 +32,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "/public")));
 
 const sessionOptions = {
-  secret: "ut&ns7CJe)2P",
+  secret: process.env.SESSION_SECRET || "ut&ns7CJe)2P",
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -45,7 +45,6 @@ const sessionOptions = {
 app.use(cookieParser());
 app.use(session(sessionOptions));
 app.use(flash());
-
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));

@@ -44,6 +44,6 @@ router.post(
 );
 
 //delete route
-router.get("/:id/delete", isLoggedIn, isOwner, destroyList);
+router.post("/:id/delete", isLoggedIn, isOwner, destroyList);
 
 module.exports = router;
