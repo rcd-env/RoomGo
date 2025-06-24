@@ -5,6 +5,7 @@ const path = require("path");
 const engine = require("ejs-mate");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -24,7 +25,7 @@ const { isLoggedIn } = require("./middlewares/isLoggedIn.middleware");
 // custom error
 const ExpressError = require("./utils/ExpressError.js");
 // confidentials
-const PORT = process.env.PORT || 5500;
+const PORT = process.env.PORT || 8080;
 
 // important tasks
 app.engine("ejs", engine);
@@ -34,15 +35,29 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "/public")));
 
+// Session store configuration
+const store = MongoStore.create({
+  mongoUrl: process.env.MONGO_URL,
+  touchAfter: 24 * 3600,
+  crypto: {
+    secret: process.env.SESSION_SECRET || "ut&ns7CJe)2P",
+  },
+  ttl: 7 * 24 * 60 * 60,
+});
+
+store.on("error", (err) => {
+  console.error("Session store error:", err);
+});
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "ut&ns7CJe)2P",
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
     expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
   },
+  store,
 };
 
 app.use(cookieParser());
@@ -62,7 +77,7 @@ connectDB();
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
-  res.locals.currUser = req.user;
+  res.locals.currUser = req.user || null;
   res.locals.mapTilesApiKey = process.env.MAP_TILES_API_KEY;
   next();
 });
@@ -84,6 +99,7 @@ app.use("/lists/:id/book", bookingRouter);
 app.use("/bookings", bookingRouter);
 
 app.get("/profile", isLoggedIn, getUserBookings);
+
 // forbideden routes
 app.all("*", (req, res, next) => {
   next(new ExpressError(404, "Page Not Found."));
