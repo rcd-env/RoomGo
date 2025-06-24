@@ -32,9 +32,24 @@ textarea:focus {
 .nav-link {
   font-weight: 600 !important;
   color: #222222 !important;
+  margin-left: 20px !important;
 }
 .navbar-brand {
-  margin-left: 20px;
+  margin-left: 20px !important;
+}
+.profile-link {
+  border: none !important;
+  border-radius: 0.375rem !important;
+  background-color: transparent !important;
+  color: #222222 !important;
+  padding: 0.375rem 0.75rem !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+}
+.profile-link:hover {
+  background-color: #f8f9fa !important;
+  color: #222222 !important;
 }
 /* footer */
 footer {
@@ -172,6 +187,11 @@ footer {
 
   .card-description {
     font-size: 0.9rem;
+  }
+  .form-switch {
+    margin-top: 1rem !important;
+    margin-right: 50% !important;
+    /* padding-right: 11rem !important; */
   }
 }
 

@@ -27,7 +27,7 @@
                 <b><%= list.title %></b>
               </p>
               <p
-                class="card-text show-text d-block mb-2"
+                class="card-text show-text d-block mb-1"
                 style="text-align: justify"
               >
                 &#10075; <i><%= list.description %></i>
@@ -36,7 +36,7 @@
               <p class="mb-1">
                 <b>₹ <%= list.price.toLocaleString("en-IN") %></b>
               </p>
-              <p class="mb-3">
+              <p class="mb-1">
                 <%= list.location %> &bull; <%= list.country %>
               </p>
 
@@ -50,8 +50,8 @@
         </div>
 
         <!-- Buttons for owner -->
-        <% if (currUser && currUser._id.equals(list.owner._id)) { %>
         <div class="row mt-3">
+          <% if (currUser && currUser._id.equals(list.owner._id)) { %>
           <div class="col-12 col-md-4 mb-2">
             <form action="/lists/<%= list._id %>/edit">
               <button class="btn btn-outline-info w-100">Edit</button>
@@ -67,8 +67,16 @@
               </button>
             </form>
           </div>
+          <% } else { %>
+          <div class="col-12 mb-2">
+            <form action="/lists/<%= list._id %>/book">
+              <button class="btn btn-outline-dark w-100">
+                Book The Spot Now
+              </button>
+            </form>
+          </div>
+          <% } %>
         </div>
-        <% } %>
       </div>
     </div>
   </div>
@@ -178,8 +186,6 @@
             Delete
           </button>
         </form>
-        <% } else {%>
-        <button class="btn btn-outline-primary">Book The Spot</button>
         <% } %>
       </div>
     </div>
@@ -199,17 +205,6 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const tooltipTriggerList = [].slice.call(
-      document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    );
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl, {
-        delay: { show: 0, hide: 100 },
-      });
-    });
-  });
-
   // Initialize the map
   document.addEventListener("DOMContentLoaded", async function () {
     const address = `<%= list.location %>, <%= list.country %>`;
