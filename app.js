@@ -17,6 +17,7 @@ const User = require("./models/user.model.js");
 const listRouter = require("./routes/list.route.js");
 const reviewRouter = require("./routes/review.route.js");
 const authRouter = require("./routes/auth.route.js");
+const bookingRouter = require("./routes/booking.route.js");
 // custom error
 const ExpressError = require("./utils/ExpressError.js");
 // confidentials
@@ -76,12 +77,12 @@ app.use("/lists/:id/reviews", reviewRouter);
 // auth routes
 app.use("/auth/", authRouter);
 // spot book routes
-// app.get("/lists/:id/book", (req, res) => {
-//   res.render("profile");
-// });
-app.get("/profile", (req, res) => {
-  res.render("users/profile");
-});
+app.use("/lists/:id/book", bookingRouter);
+// booking routes
+// profile route with bookings
+const { getUserBookings } = require("./controllers/booking.controller");
+const { isLoggedIn } = require("./middlewares/isLoggedIn.middleware");
+app.get("/profile", isLoggedIn, getUserBookings);
 // forbideden routes
 app.all("*", (req, res, next) => {
   next(new ExpressError(404, "Page Not Found."));

@@ -25,22 +25,81 @@
             <hr class="border-dark" />
 
             <!-- Profile Info -->
-            <div class="mb-3">
+            <div class="mb-0">
               <h6 class="text-uppercase text-muted">Member Since</h6>
               <p class="mb-0"><%= currUser.createdAt.toDateString() %></p>
               <hr />
             </div>
-            <!-- hosted sopts   -->
-            <!-- <div class="mb-3">
-              <h6 class="text-uppercase text-muted">Member Since</h6>
-              <p class="mb-0"><%= currUser.createdAt.toDateString() %></p>
-              <hr />
-            </div> -->
-            <!-- Add more user-specific info here -->
-            <!-- <div class="mb-3">
-              <h6 class="text-uppercase text-muted">Listings Hosted</h6>
-              <p class="mb-0"> active</p>
-            </div> -->
+
+            <!-- Bookings Section -->
+            <div class="mt-0">
+              <h5 class="mb-3">Your Bookings</h5>
+
+              <% if (bookings && bookings.length > 0) { %>
+              <div class="row">
+                <% bookings.forEach(booking => { %>
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                  <div class="card h-100">
+                    <img
+                      src="<%= booking.list.image.url %>"
+                      class="card-img-top"
+                      alt="<%= booking.list.title %>"
+                      style="height: 180px; object-fit: cover"
+                    />
+                    <div class="card-body">
+                      <h5 class="card-title"><%= booking.list.title %></h5>
+                      <p class="card-text"><%= booking.list.location %></p>
+                      <p class="mb-1">
+                        <span class="fw-bold">Check-in:</span> <%=
+                        booking.checkIn.toLocaleDateString("en-IN") %>
+                      </p>
+                      <p class="mb-1">
+                        <span class="fw-bold">Check-out:</span> <%=
+                        booking.checkOut.toLocaleDateString("en-IN") %>
+                      </p>
+                      <p class="mb-2">
+                        <span class="fw-bold">Total:</span> ₹<%=
+                        booking.totalPrice.toLocaleString("en-IN") %>
+                        <span class="small text-muted">(incl. GST)</span>
+                      </p>
+
+                      <div
+                        class="d-flex justify-content-between align-items-center"
+                      >
+                        <span
+                          class="badge <%= booking.status === 'confirmed' ? 'bg-success' : 'bg-danger' %>"
+                        >
+                          <%= booking.status.charAt(0).toUpperCase() +
+                          booking.status.slice(1) %>
+                        </span>
+
+                        <% if (booking.status === 'confirmed') { %>
+                        <form
+                          action="/lists/<%= booking.list._id %>/book/cancel/<%= booking._id %>"
+                          method="POST"
+                        >
+                          <button
+                            type="submit"
+                            class="btn btn-sm btn-outline-danger"
+                          >
+                            Cancel
+                          </button>
+                        </form>
+                        <% } %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <% }); %>
+              </div>
+              <% } else { %>
+              <div class="alert alert-info">
+                You haven't booked any spots yet.
+                <a href="/lists" class="alert-link">Explore available spots</a>
+                and book your next stay!
+              </div>
+              <% } %>
+            </div>
 
             <!-- Action Buttons -->
           </div>
