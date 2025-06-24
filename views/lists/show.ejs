@@ -57,16 +57,63 @@
               <button class="btn btn-outline-info w-100">Edit</button>
             </form>
           </div>
+          <!-- Delete Button that triggers modal -->
           <div class="col-12 col-md-8">
-            <form action="/lists/<%= list._id %>/delete">
-              <button
-                class="btn btn-outline-danger w-100"
-                onclick="return confirm('Are you sure, You want to delete this spot?')"
-              >
-                Delete
-              </button>
-            </form>
+            <button
+              type="button"
+              class="btn btn-outline-danger w-100"
+              data-bs-toggle="modal"
+              data-bs-target="#confirmDeleteModal"
+            >
+              Delete
+            </button>
           </div>
+
+          <!-- Delete Confirmation Modal -->
+          <div
+            class="modal fade"
+            id="confirmDeleteModal"
+            tabindex="-1"
+            aria-labelledby="confirmDeleteLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content bg-white text-black border-dark">
+                <div class="modal-header border-0">
+                  <h5 class="modal-title" id="confirmDeleteLabel">
+                    Confirm Deletion
+                  </h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete this listing? This action
+                  cannot be undone.
+                </div>
+                <div class="modal-footer border-0">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Cancel
+                  </button>
+
+                  <!-- Actual delete form -->
+                  <form action="/lists/<%= list._id %>/delete" method="POST">
+                    <button type="submit" class="btn btn-danger">
+                      Yes, Delete
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <% } else { %>
           <div class="col-12 mb-2">
             <form action="/lists/<%= list._id %>/book">
@@ -175,17 +222,65 @@
           &#9758; <%=review.author.username %>
         </p>
         <% } %> <% if(currUser && currUser._id.equals(review.author._id)) { %>
-        <form
-          action="/lists/<%=list._id%>/reviews/<%= review._id%>"
-          method="post"
+        <!-- Delete button triggers modal -->
+        <button
+          type="button"
+          class="btn btn-outline-dark"
+          data-bs-toggle="modal"
+          data-bs-target="#confirmReviewDeleteModal-<%= review._id %>"
         >
-          <button
-            class="btn btn-outline-dark"
-            onclick="return confirm('Are you sure, You want to delete this review?')"
-          >
-            Delete
-          </button>
-        </form>
+          Delete
+        </button>
+
+        <!-- Modal -->
+        <div
+          class="modal fade"
+          id="confirmReviewDeleteModal-<%= review._id %>"
+          tabindex="-1"
+          aria-labelledby="confirmReviewDeleteLabel-<%= review._id %>"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-white text-black border-dark">
+              <div class="modal-header border-0">
+                <h5
+                  class="modal-title"
+                  id="confirmReviewDeleteLabel-<%= review._id %>"
+                >
+                  Confirm Delete Review
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                Are you sure you want to delete this review? This action cannot
+                be undone.
+              </div>
+              <div class="modal-footer border-0">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancel
+                </button>
+                <form
+                  action="/lists/<%= list._id %>/reviews/<%= review._id %>"
+                  method="POST"
+                >
+                  <button type="submit" class="btn btn-danger">
+                    Yes, Delete
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <% } %>
       </div>
     </div>
@@ -228,7 +323,7 @@
       const lat = parseFloat(data[0].lat);
       const lon = parseFloat(data[0].lon);
 
-      const map = L.map("map").setView([lat, lon], 15);
+      const map = L.map("map").setView([lat, lon], 10);
 
       L.tileLayer(
         `https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=<%= mapTilesApiKey %>`,

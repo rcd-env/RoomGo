@@ -75,7 +75,13 @@ app.use("/lists", listRouter);
 app.use("/lists/:id/reviews", reviewRouter);
 // auth routes
 app.use("/auth/", authRouter);
-
+// spot book routes
+// app.get("/lists/:id/book", (req, res) => {
+//   res.render("profile");
+// });
+app.get("/profile", (req, res) => {
+  res.render("users/profile");
+});
 // forbideden routes
 app.all("*", (req, res, next) => {
   next(new ExpressError(404, "Page Not Found."));

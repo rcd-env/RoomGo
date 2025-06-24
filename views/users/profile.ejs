@@ -1,0 +1,51 @@
+<% layout('layouts/boilerplate') -%>
+
+<body>
+  <main class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body bg-white text-black">
+            <!-- Profile Header -->
+            <div class="d-flex align-items-center mb-1">
+              <div
+                class="rounded-circle bg-black text-white d-flex justify-content-center align-items-center"
+                style="width: 60px; height: 60px; font-size: 1.5rem"
+              >
+                <%= currUser.username[0].toUpperCase() %>
+              </div>
+              <div class="ms-3">
+                <h4 class="mb-0"><%= currUser.username %></h4>
+                <p class="text-muted mb-0" style="font-size: 0.9rem">
+                  <%= currUser.email %>
+                </p>
+              </div>
+            </div>
+
+            <hr class="border-dark" />
+
+            <!-- Profile Info -->
+            <div class="mb-3">
+              <h6 class="text-uppercase text-muted">Member Since</h6>
+              <p class="mb-0"><%= currUser.createdAt.toDateString() %></p>
+              <hr />
+            </div>
+            <!-- hosted sopts   -->
+            <!-- <div class="mb-3">
+              <h6 class="text-uppercase text-muted">Member Since</h6>
+              <p class="mb-0"><%= currUser.createdAt.toDateString() %></p>
+              <hr />
+            </div> -->
+            <!-- Add more user-specific info here -->
+            <!-- <div class="mb-3">
+              <h6 class="text-uppercase text-muted">Listings Hosted</h6>
+              <p class="mb-0"> active</p>
+            </div> -->
+
+            <!-- Action Buttons -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
