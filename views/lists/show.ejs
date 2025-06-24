@@ -534,7 +534,7 @@
         const lat = parseFloat(data[0].lat);
         const lon = parseFloat(data[0].lon);
 
-        const map = L.map("map").setView([lat, lon], 10);
+        const map = L.map("map").setView([lat, lon], 5);
 
         L.tileLayer(
           `https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=<%= mapTilesApiKey %>`,
@@ -546,9 +546,7 @@
 
         L.marker([lat, lon])
           .addTo(map)
-          .bindPopup(
-            `Exact location will be provided after booking the spot 🤓`
-          )
+          .bindPopup(`See You Soon! 🤓`)
           .openPopup();
       })
       .catch((err) => {
