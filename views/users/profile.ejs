@@ -39,56 +39,55 @@
               <div class="row">
                 <% bookings.forEach(booking => { %>
                 <div class="col-12 col-md-6 col-lg-4 mb-4">
-                  <div class="card h-100">
-                    <img
-                      src="<%= booking.list.image.url %>"
-                      class="card-img-top"
-                      alt="<%= booking.list.title %>"
-                      style="height: 180px; object-fit: cover"
-                    />
-                    <div class="card-body">
-                      <h5 class="card-title"><%= booking.list.title %></h5>
-                      <p class="card-text"><%= booking.list.location %></p>
-                      <p class="mb-1">
-                        <span class="fw-bold">Check-in:</span> <%=
-                        booking.checkIn.toLocaleDateString("en-IN") %>
-                      </p>
-                      <p class="mb-1">
-                        <span class="fw-bold">Check-out:</span> <%=
-                        booking.checkOut.toLocaleDateString("en-IN") %>
-                      </p>
-                      <p class="mb-2">
-                        <span class="fw-bold">Total:</span> ₹<%=
-                        booking.totalPrice.toLocaleString("en-IN") %>
-                        <span class="small text-muted">(incl. GST)</span>
-                      </p>
+                  <!-- Make the entire card clickable and direct to list page -->
+                  <a
+                    href="/lists/<%= booking.list._id %>"
+                    class="text-decoration-none text-reset"
+                  >
+                    <div class="card h-100 hover-shadow">
+                      <img
+                        src="<%= booking.list.image.url %>"
+                        class="card-img-top"
+                        alt="<%= booking.list.title %>"
+                        style="height: 180px; object-fit: cover"
+                      />
+                      <div class="card-body">
+                        <h5 class="card-title"><%= booking.list.title %></h5>
+                        <p class="card-text">
+                          <%= booking.list.location %> &bull; <%=
+                          booking.list.country %>
+                        </p>
+                        <p class="mb-1">
+                          <span class="fw-bold">Check-in:</span> <%=
+                          booking.checkIn.toLocaleDateString("en-IN") %>
+                        </p>
+                        <p class="mb-1">
+                          <span class="fw-bold">Check-out:</span> <%=
+                          booking.checkOut.toLocaleDateString("en-IN") %>
+                        </p>
+                        <p class="mb-2">
+                          <span class="fw-bold">Total:</span> ₹<%=
+                          booking.totalPrice.toLocaleString("en-IN") %>
+                          <span class="small text-muted">(incl. GST)</span>
+                        </p>
 
-                      <div
-                        class="d-flex justify-content-between align-items-center"
-                      >
-                        <span
-                          class="badge <%= booking.status === 'confirmed' ? 'bg-success' : 'bg-danger' %>"
+                        <div
+                          class="d-flex justify-content-between align-items-center"
                         >
-                          <%= booking.status.charAt(0).toUpperCase() +
-                          booking.status.slice(1) %>
-                        </span>
-
-                        <% if (booking.status === 'confirmed') { %>
-                        <form
-                          action="/lists/<%= booking.list._id %>/book/cancel/<%= booking._id %>"
-                          method="POST"
-                        >
+                          <!-- Cancel button that triggers modal -->
                           <button
-                            type="submit"
-                            class="btn btn-sm btn-outline-danger"
+                            type="button"
+                            class="btn btn-sm btn-outline-danger cancel-booking-btn"
+                            data-list-id="<%= booking.list._id %>"
+                            data-booking-id="<%= booking._id %>"
+                            onclick="event.stopPropagation();"
                           >
-                            Cancel
+                            Cancel Booking
                           </button>
-                        </form>
-                        <% } %>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </a>
                 </div>
                 <% }); %>
               </div>
@@ -107,4 +106,73 @@
       </div>
     </div>
   </main>
+
+  <!-- Cancel Booking Confirmation Modal -->
+  <div
+    class="modal fade"
+    id="cancelBookingModal"
+    tabindex="-1"
+    aria-labelledby="cancelBookingLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-white text-black border-dark">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="cancelBookingLabel">
+            Confirm Cancellation
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to cancel this booking? This action cannot be
+          undone.
+        </div>
+        <div class="modal-footer border-0">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Keep Booking
+          </button>
+          <form id="cancelBookingForm" action="" method="POST">
+            <button type="submit" class="btn btn-danger">
+              Yes, Cancel Booking
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Set up cancel booking modal
+    document.addEventListener("DOMContentLoaded", function () {
+      const cancelButtons = document.querySelectorAll(".cancel-booking-btn");
+      const cancelForm = document.getElementById("cancelBookingForm");
+      // Initialize the modal once
+      const cancelModalElement = document.getElementById("cancelBookingModal");
+
+      cancelButtons.forEach((button) => {
+        button.addEventListener("click", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Set the form action based on the button's data attributes
+          const listId = this.getAttribute("data-list-id");
+          const bookingId = this.getAttribute("data-booking-id");
+          cancelForm.action = `/lists/${listId}/book/cancel/${bookingId}`;
+
+          // Show the modal using Bootstrap's modal API
+          const cancelModal = new bootstrap.Modal(cancelModalElement);
+          cancelModal.show();
+        });
+      });
+    });
+  </script>
 </body>

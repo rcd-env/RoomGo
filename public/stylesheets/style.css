@@ -234,3 +234,11 @@ footer {
 .form-main {
   padding: 1rem 5rem !important;
 }
+/* Card hover effect */
+.hover-shadow {
+  transition: all 0.3s ease;
+}
+
+.hover-shadow:hover {
+  opacity: 0.9;
+}

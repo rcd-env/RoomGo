@@ -78,7 +78,8 @@ app.use("/lists/:id/reviews", reviewRouter);
 app.use("/auth/", authRouter);
 // spot book routes
 app.use("/lists/:id/book", bookingRouter);
-// booking routes
+// direct booking routes (for accessing booking details)
+app.use("/bookings", bookingRouter);
 // profile route with bookings
 const { getUserBookings } = require("./controllers/booking.controller");
 const { isLoggedIn } = require("./middlewares/isLoggedIn.middleware");

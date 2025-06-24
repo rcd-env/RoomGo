@@ -50,7 +50,6 @@ module.exports.showList = async (req, res, next) => {
     let list = await List.findOne({ _id: id })
       .populate({ path: "reviews", populate: { path: "author" } })
       .populate("owner");
-    console.log(list.reviews);
 
     if (!list) {
       req.flash("error", "Place not found.");

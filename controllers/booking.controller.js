@@ -43,7 +43,6 @@ module.exports.createBooking = async (req, res, next) => {
       checkIn: checkInDate,
       checkOut: checkOutDate,
       totalPrice: finalPrice,
-      status: "confirmed",
     });
 
     await booking.save();
@@ -75,7 +74,7 @@ module.exports.getUserBookings = async (req, res, next) => {
   }
 };
 
-// Cancel booking
+// Cancel booking (deletes the booking from the database)
 module.exports.cancelBooking = async (req, res, next) => {
   try {
     const { bookingId } = req.params;
@@ -92,11 +91,37 @@ module.exports.cancelBooking = async (req, res, next) => {
       return res.redirect("/profile");
     }
 
-    booking.status = "cancelled";
-    await booking.save();
+    // Delete the booking instead of changing status
+    await Booking.findByIdAndDelete(bookingId);
 
     req.flash("success", "Booking cancelled successfully");
     res.redirect("/profile");
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Get booking details and redirect to list page
+module.exports.getBookingDetails = async (req, res, next) => {
+  try {
+    const { bookingId } = req.params;
+
+    const booking = await Booking.findById(bookingId).populate("list");
+
+    if (!booking) {
+      req.flash("error", "Booking not found");
+      return res.redirect("/profile");
+    }
+
+    // Check if the booking belongs to the user
+    if (!booking.user.equals(req.user._id)) {
+      req.flash("error", "You don't have permission to view this booking");
+      return res.redirect("/profile");
+    }
+
+    // Redirect to the list page instead of showing booking details
+    req.flash("success", "Viewing property details for your booking");
+    res.redirect(`/lists/${booking.list._id}`);
   } catch (err) {
     next(err);
   }
