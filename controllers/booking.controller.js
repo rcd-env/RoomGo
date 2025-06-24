@@ -48,8 +48,8 @@ module.exports.createBooking = async (req, res, next) => {
     await booking.save();
 
     // Flash success message
-    const startDate = checkInDate.toLocaleDateString();
-    const endDate = checkOutDate.toLocaleDateString();
+    const startDate = checkInDate.toLocaleDateString("en-IN");
+    const endDate = checkOutDate.toLocaleDateString("en-IN");
     req.flash(
       "success",
       `You've booked ${list.title} from ${startDate} to ${endDate}. Check your profile for details.`

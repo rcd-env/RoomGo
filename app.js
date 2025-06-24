@@ -18,6 +18,9 @@ const listRouter = require("./routes/list.route.js");
 const reviewRouter = require("./routes/review.route.js");
 const authRouter = require("./routes/auth.route.js");
 const bookingRouter = require("./routes/booking.route.js");
+// profile route with bookings
+const { getUserBookings } = require("./controllers/booking.controller");
+const { isLoggedIn } = require("./middlewares/isLoggedIn.middleware");
 // custom error
 const ExpressError = require("./utils/ExpressError.js");
 // confidentials
@@ -79,9 +82,7 @@ app.use("/auth/", authRouter);
 app.use("/lists/:id/book", bookingRouter);
 // direct booking routes (for accessing booking details)
 app.use("/bookings", bookingRouter);
-// profile route with bookings
-const { getUserBookings } = require("./controllers/booking.controller");
-const { isLoggedIn } = require("./middlewares/isLoggedIn.middleware");
+
 app.get("/profile", isLoggedIn, getUserBookings);
 // forbideden routes
 app.all("*", (req, res, next) => {
