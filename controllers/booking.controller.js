@@ -67,6 +67,7 @@ module.exports.getUserBookings = async (req, res, next) => {
     const bookings = await Booking.find({ user: req.user._id })
       .populate("list")
       .sort({ createdAt: -1 });
+    console.log(bookings);
 
     // Get user's hosted listings
     const hostedSpots = await List.find({ owner: req.user._id }).sort({

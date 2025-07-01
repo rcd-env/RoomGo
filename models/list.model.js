@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Review = require("./review.model.js");
+const Booking = require("./booking.model.js");
 const listSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -40,6 +41,7 @@ const listSchema = new mongoose.Schema({
 listSchema.post("findOneAndDelete", async (list) => {
   if (list.reviews.length) {
     await Review.deleteMany({ _id: { $in: list.reviews } });
+    await Booking.deleteMany({ list: list._id });
   }
 });
 
